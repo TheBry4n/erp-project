@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  erp-db:
+    container_name: erp
+    image: postgres:13
+    ports:
+      - 5435:5432
+    environment:
+      POSTGRES_USER: brianerp
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: erpdb

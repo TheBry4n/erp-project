@@ -1,0 +1,74 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Personale {
+  idPersonale      String      @id @default(uuid())
+  email            String      @unique
+  hashPass         String
+  hashRt           String?
+  role             Role        @default(DIPENDENTE)
+  nome             String
+  cognome          String
+  dataAssunzione   DateTime    @updatedAt
+  dataNascita      DateTime
+  idResponsabile   String?
+  responsabile     Personale?  @relation("responsabilePersonale", fields: [idResponsabile], references: [idPersonale])
+  personaleGestito Personale[] @relation("responsabilePersonale")
+  negozioGestito   Negozio[]   @relation("respomsabileNegozio")
+  idTurno          String?
+  turno            Turno?      @relation("personaleTurno", fields: [idTurno], references: [idTurno])
+}
+
+model Candidati {
+  idCandidato String   @id @default(uuid())
+  email       String   @unique
+  nome        String
+  cognome     String
+  dataNascita DateTime
+}
+
+model Turno {
+  idTurno    String      @id @default(uuid())
+  nomeTurno  String      @unique
+  ore        Int         @default(8)
+  pagaOraria Int         @default(10)
+  personale  Personale[] @relation("personaleTurno")
+}
+
+model Negozio {
+  idNegozio      String          @id @default(uuid())
+  indirizzo      String          @unique
+  idResponsabile String?
+  responsabile   Personale?      @relation("respomsabileNegozio", fields: [idResponsabile], references: [idPersonale])
+  negozioScarpe  ScarpeNegozio[] @relation("negozioScarpe")
+}
+
+model Scarpe {
+  idScarpa      String          @id @default(uuid())
+  marca         String
+  modello       String
+  scarpeNegozio ScarpeNegozio[] @relation("scarpeNegozio")
+
+  @@unique([marca, modello])
+}
+
+model ScarpeNegozio {
+  idNegozio String
+  idScarpa  String
+  negozio   Negozio @relation("negozioScarpe", fields: [idNegozio], references: [idNegozio])
+  scarpa    Scarpe  @relation("scarpeNegozio", fields: [idScarpa], references: [idScarpa])
+
+  @@id([idNegozio, idScarpa])
+}
+
+enum Role {
+  MANAGER
+  CAPO
+  DIPENDENTE
+}
