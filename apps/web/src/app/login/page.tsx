@@ -1,89 +1,78 @@
 "use client"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@web/src/components/ui/form'
 import { loginSchema } from '@web/src/zodSchema'
-import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from '@web/src/components/ui/input'
 import { Button } from '@web/src/components/ui/button'
 import { loginSubmit } from '@web/src/actions'
-
-interface ErrorResponse {
-  statusCode: number;
-  message: string;
-}
+import { NavBar } from "../../components"
+import { useState } from 'react'
+import { setTimeout } from 'timers'
 
 export default function Login() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<ErrorResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "",
-      password: "",
-      passwordConfirm: ""
+      password: ""
     }
   })
 
   const handleSubmit = async (data: z.infer<typeof loginSchema>) => {
-    try{
-      setLoading(true)
-      await loginSubmit(data)
-    }catch(error){
-      if(error instanceof Object && "statusCode" in error && "message" in error){
-        setError(error as ErrorResponse)
-      }else {
-        setError({statusCode: 500, message: "undefine Error"})
-      }
-    }finally{
-      setLoading(false)
-    }
+    setIsLoading(true)
+
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 2000)
   }
 
   return (
-    <main className='flex flex-col justify-center min-h-screen items-center p-24'>
-      <h1 className="capitalize md:uppercase text-4xl" >Login</h1>
-      <Form {...form} >
-        <form onSubmit={form.handleSubmit(loginSubmit)} className="max-w-md w-full flex flex-col gap-7" method='post' >
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong>{error.statusCode}</strong>: {error.message}
-          </div>
-        )}
-          <FormField control={form.control} name="email" render={({field}) => {
-            return <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder='Email' type='email' {...field}/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          }} >
-          </FormField>
-          <FormField control={form.control} name="password" render={({field}) => {
-            return <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input {...field} type='password' placeholder='Password'/>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          }} >
-          </FormField>
-          <FormField control={form.control} name="passwordConfirm" render={({field}) => {
-            return <FormItem>
-              <FormLabel>Confirm password</FormLabel>
-              <FormControl>
-                <Input {...field} type='password' placeholder='Confirm password' />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          }} >
-          </FormField>
-          <Button className='w-full' type='submit' >{loading ? "Loading..." : "Login"}</Button>
-        </form>
-      </Form>
-    </main>
+    <>
+      <NavBar />
+      {isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
+         <div className=" bg-gray-700 rounded-lg p-8">
+           <div className="flex justify-center items-center p-8">
+              <svg className="animate-spin h-8 w-8 mr-3 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A8.001 8.001 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647zM16 12c0-3.042-1.135-5.824-3-7.938l-3 2.647A7.96 7.96 0 0112 4v8h4zm2 5.291c1.865-2.114 3-4.896 3-7.938h-4v8l1-2.647z"></path>
+              </svg>
+            <span className="ml-2" >Caricamento...</span>
+           </div>
+         </div>
+       </div>
+      )}
+      <main className='min-h-96 flex flex-col justify-center items-center p-24 mt-24'>
+        <h1 className="capitalize md:uppercase text-4xl" >Login</h1>
+        <Form {...form} >
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="max-w-md w-full flex flex-col gap-7" method='post' >
+            <FormField control={form.control} name="email" render={({field}) => {
+              return <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input placeholder='Email' type='email' {...field}/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            }} >
+            </FormField>
+            <FormField control={form.control} name="password" render={({field}) => {
+              return <FormItem>
+                <FormLabel>Password</FormLabel>
+                <FormControl>
+                  <Input {...field} type='password' placeholder='Password'/>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            }} >
+            </FormField>
+            <Button className='w-full' type='submit' >Login</Button>
+          </form>
+        </Form>
+      </main>
+    </>
   )
 }
