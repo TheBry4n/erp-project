@@ -1,11 +1,11 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@server/prisma/prisma.service';
-import { CandidatoDto, SigninDto } from './dto';
-import { Candidati } from '@prisma/client';
 import { Tokens } from '@server/types';
 import * as argon from "argon2";
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
+import { LoginDto, SignupDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -15,28 +15,35 @@ export class AuthService {
         private jwt: JwtService
         ){}
 
-    async candidatura(dto: CandidatoDto): Promise<Candidati> {
-        const candidato = await this.prisma.candidati.create({
+    async signup(dto: SignupDto): Promise<User> {
+        const hash = await argon.hash(dto.password);
+
+        const user = await this.prisma.user.create({
             data: {
-                ...dto
+                nome: dto.nome,
+                cognome: dto.cognome,
+                email: dto.email,
+                hashPW: hash,
+                hashRT: ""
             }
         })
-        
-        return candidato
+
+        return user;
     }
 
-    async signin(dto: SigninDto): Promise<Tokens> {
-        const user = await this.prisma.personale.findUnique({
+    async login(dto: LoginDto): Promise<Tokens> {
+        const user = await this.prisma.user.findUnique({
             where: {
-                email : dto.email
+                email: dto.email
             }
         })
-        if(!user) throw new ForbiddenException('credenziali errate')
+        if(!user) throw new ForbiddenException("Account inesistente");
 
-        const pwMatch = await argon.verify(user.hashPass, dto.password)
-        if(!pwMatch) throw new ForbiddenException('Credenziali errate')
+        const matchPW = await argon.verify(user.hashPW, dto.password)
 
-        return await this.createTokens(user.idPersonale, user.email)
+        if(!matchPW) throw new ForbiddenException("Password errata");
+
+        return this.createTokens(user.userId, user.email);
     }
 
     async createTokens(sub: string, email: string): Promise<Tokens>{

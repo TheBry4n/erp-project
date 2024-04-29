@@ -1,20 +1,20 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CandidatoDto, SigninDto } from './dto';
-import { Candidati } from '@prisma/client';
+import { SignupDto, LoginDto } from './dto';
 import { Tokens } from '@server/types';
+import { User } from '@prisma/client';
 
-@Controller('auth')
+@Controller('api')
 export class AuthController {
     constructor(private service: AuthService){}
 
-    @Post('candidatura')
-    candidatura(@Body() candidaturaDto: CandidatoDto): Promise<Candidati>{
-        return this.service.candidatura(candidaturaDto)
+    @Post('signup')
+    signup(@Body() signupDto: SignupDto): Promise<User>{
+        return this.service.signup(signupDto)
     }
 
-    @Post('signin')
-    signin(@Body() signinDto: SigninDto): Promise<Tokens>{
-        return this.service.signin(signinDto)
+    @Post('login')
+    login(@Body() loginDto: LoginDto): Promise<Tokens>{
+        return this.service.login(loginDto)
     }
 }

@@ -7,68 +7,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Personale {
-  idPersonale      String      @id @default(uuid())
-  email            String      @unique
-  hashPass         String
-  hashRt           String?
-  role             Role        @default(DIPENDENTE)
+model User {
+  userId           String      @id @default(uuid())
   nome             String
   cognome          String
-  dataAssunzione   DateTime    @updatedAt
-  dataNascita      DateTime
-  idResponsabile   String?
-  responsabile     Personale?  @relation("responsabilePersonale", fields: [idResponsabile], references: [idPersonale])
-  personaleGestito Personale[] @relation("responsabilePersonale")
-  negozioGestito   Negozio[]   @relation("respomsabileNegozio")
-  idTurno          String?
-  turno            Turno?      @relation("personaleTurno", fields: [idTurno], references: [idTurno])
+  email            String      @unique
+  hashPW           String
+  hashRT           String
+  ruolo            Role        @default(UTENTE)
+  creazioneAccount DateTime    @default(now())
+  updateAccount    DateTime    @updatedAt
+  indirizzi        Indirizzo[] @relation("userIndirizzo")
+  ordini           Ordine[]    @relation("userOrdine")
+}
+
+model Indirizzo {
+  indirizzoId      String   @id @default(uuid())
+  via              String
+  civico           String
+  citta            String
+  userId           String
+  updateIndirizzo  DateTime @updatedAt
+  user             User     @relation("userIndirizzo", fields: [userId], references: [userId])
+  ordiniEffettuati Ordine[] @relation("indrizzoOrdine")
 }
 
 model Candidati {
-  idCandidato String   @id @default(uuid())
-  email       String   @unique
-  nome        String
-  cognome     String
-  dataNascita DateTime
-}
-
-model Turno {
-  idTurno    String      @id @default(uuid())
-  nomeTurno  String      @unique
-  ore        Int         @default(8)
-  pagaOraria Int         @default(10)
-  personale  Personale[] @relation("personaleTurno")
-}
-
-model Negozio {
-  idNegozio      String          @id @default(uuid())
-  indirizzo      String          @unique
-  idResponsabile String?
-  responsabile   Personale?      @relation("respomsabileNegozio", fields: [idResponsabile], references: [idPersonale])
-  negozioScarpe  ScarpeNegozio[] @relation("negozioScarpe")
+  CandidatoId String @id @default(uuid())
+  email       String @unique
 }
 
 model Scarpe {
-  idScarpa      String          @id @default(uuid())
-  marca         String
-  modello       String
-  scarpeNegozio ScarpeNegozio[] @relation("scarpeNegozio")
+  scarpaId       String   @id @default(uuid())
+  marca          String
+  modello        String
+  prezzoUnitario Float
+  updateScarpa   DateTime @updatedAt
+  ordini         Ordine[] @relation("scarpaOrdine")
 
   @@unique([marca, modello])
 }
 
-model ScarpeNegozio {
-  idNegozio String
-  idScarpa  String
-  negozio   Negozio @relation("negozioScarpe", fields: [idNegozio], references: [idNegozio])
-  scarpa    Scarpe  @relation("scarpeNegozio", fields: [idScarpa], references: [idScarpa])
-
-  @@id([idNegozio, idScarpa])
+model Ordine {
+  ordineId     String    @id @default(uuid())
+  scarpe       Scarpe[]  @relation("scarpaOrdine")
+  userId       String
+  user         User      @relation("userOrdine", fields: [userId], references: [userId])
+  indirizzoId  String
+  indirizzo    Indirizzo @relation("indrizzoOrdine", fields: [indirizzoId], references: [indirizzoId])
+  prezzoTotale Float
+  dataConsegna DateTime
+  consegnato   Boolean   @default(false)
+  dataOrdine   DateTime  @default(now())
 }
 
 enum Role {
   MANAGER
-  CAPO
-  DIPENDENTE
+  UTENTE
+  ADMIN
 }

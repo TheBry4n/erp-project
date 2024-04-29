@@ -6,5 +6,5 @@ export const loginHandle = () => {
 }
 
 export const candidaturaHandle = () => {
-    redirect("/candidatura")
+    redirect("/signup")
 }

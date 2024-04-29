@@ -1,3 +1,2 @@
-export * from './candidato.dto'
-export * from './personale.dto'
-export * from './signin.dto'
+export * from './signup.dto'
+export * from './login.dto'

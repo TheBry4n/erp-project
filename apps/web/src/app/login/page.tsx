@@ -45,7 +45,7 @@ export default function Login() {
          </div>
        </div>
       )}
-      <main className='min-h-96 flex flex-col justify-center items-center p-24 mt-24'>
+      <main className='min-h-96 flex flex-col justify-center items-center p-24'>
         <h1 className="capitalize md:uppercase text-4xl" >Login</h1>
         <Form {...form} >
           <form onSubmit={form.handleSubmit(handleSubmit)} className="max-w-md w-full flex flex-col gap-7" method='post' >

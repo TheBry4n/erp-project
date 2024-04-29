@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <>
       <NavBar />
-      <div className=" vh-90 flex flex-col justify-start items-end mt-32 mr-48">
+      <div className=" vh-90 flex flex-col justify-start items-end mt-12 mr-24">
         <div className="flex flex-col p-8">
           <Card
             title="Login"
@@ -15,9 +15,9 @@ export default function Home() {
             onClick={loginHandle} 
           />
           <Card
-            title="Candidatura"
-            descrption="Vuoi far parte del team? Allora candidati"
-            buttonText="Candidati"
+            title="Signup"
+            descrption="Non hai un account? crealo!!"
+            buttonText="Signup"
             onClick={candidaturaHandle} 
           />
         </div>
