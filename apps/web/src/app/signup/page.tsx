@@ -1,16 +1,21 @@
 "use client"
-import React, { useState } from 'react'
-import { NavBar } from '@web/src/components'
+import React, { useState } from 'react';
+import { NavBar } from '@web/src/components';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@web/src/components/ui/form';
-import { z } from "zod"
+import { z } from "zod";
 import { useForm } from 'react-hook-form';
 import { signupSchema }  from "@web/src/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from '@web/src/components/ui/input';
 import { Button } from '@web/src/components/ui/button';
+import { signupRequest }  from "../../actions";
+import { loginRedirect } from '../../actions';
+import { errorResponse } from '@web/src/types';
 
 function signup() {
     const [ isLoading, setLoading ] = useState(false);
+    const [error, setError] = useState(false);
+    const [errorObj, setErrorObj] = useState<{statusCode: 0, message: ""} | errorResponse>({statusCode: 0, message: ""})
     const form = useForm<z.infer<typeof signupSchema>>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -22,13 +27,18 @@ function signup() {
         }
     })
 
-    const handleSubmit = async (data: z.infer<typeof signupSchema>) => {
+    const handleSubmit = async (data: z.infer<typeof signupSchema>): Promise<void> => {
         setLoading(true)
-        console.log(data)
+        const res = await signupRequest(data);
+        console.log(res)
 
-        setTimeout(() => {
-            setLoading(false)
-        }, 2000);
+        if(!res){
+            loginRedirect();
+        }else{
+            setErrorObj(res);
+            setLoading(false);
+            setError(true);
+        }
     } 
 
   return (
@@ -43,6 +53,18 @@ function signup() {
                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A8.001 8.001 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647zM16 12c0-3.042-1.135-5.824-3-7.938l-3 2.647A7.96 7.96 0 0112 4v8h4zm2 5.291c1.865-2.114 3-4.896 3-7.938h-4v8l1-2.647z"></path>
                  </svg>
                <span className="ml-2" >Caricamento...</span>
+              </div>
+            </div>
+          </div>
+        )}
+        {error && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
+            <div className=" bg-gray-700 rounded-lg p-8">
+              <div className="flex flex-col justify-center items-center p-8">
+                <h2 className="ml-2" >Error</h2>
+                <p className="ml-2" >status code: {errorObj.statusCode}</p>
+                <p className="ml-2" >message: {errorObj.message}</p>
+                <Button onClick={() => setError(false)} variant="destructive">Close</Button>
               </div>
             </div>
           </div>

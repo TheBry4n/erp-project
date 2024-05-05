@@ -1,5 +1,5 @@
 "use client"
-import { candidaturaHandle, loginHandle } from "../actions";
+import { loginRedirect, signupRedirect } from "../actions";
 import { NavBar, Card } from "../components"
 
 export default function Home() {
@@ -12,13 +12,13 @@ export default function Home() {
             title="Login"
             descrption="Accedi al tuo account"
             buttonText="Login"
-            onClick={loginHandle} 
+            onClick={loginRedirect} 
           />
           <Card
             title="Signup"
             descrption="Non hai un account? crealo!!"
             buttonText="Signup"
-            onClick={candidaturaHandle} 
+            onClick={signupRedirect} 
           />
         </div>
       </div> 

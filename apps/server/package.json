@@ -6,6 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
+    "prisma:dev:deploy": "prisma migrate deploy",
+    "db:dev:up": "docker compose up erp-db -d",
+    "db:dev:rm": "docker compose rm erp-db -s -f -v",
+    "db:dev:restart": "pnpm db:dev:rm && pnpm db:dev:up && timeout 3 && pnpm prisma:dev:deploy",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",

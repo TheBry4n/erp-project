@@ -1,10 +1,11 @@
 "use server"
 import { redirect } from "next/navigation"
 
-export const loginHandle = () => {
+export const loginRedirect = () => {
     redirect("/login")
 }
 
-export const candidaturaHandle = () => {
+export const signupRedirect = () => {
     redirect("/signup")
 }
+

@@ -6,13 +6,16 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from '@web/src/components/ui/input'
 import { Button } from '@web/src/components/ui/button'
-import { loginSubmit } from '@web/src/actions'
+import { loginRequest } from '@web/src/actions'
 import { NavBar } from "../../components"
 import { useState } from 'react'
-import { setTimeout } from 'timers'
+import { errorResponse } from '@web/src/types'
+import { homePageRedirect } from '@web/src/actions'
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState(false)
+  const [errorObj, setErrorObj] = useState<errorResponse | {statusCode: 0, message: ""}>({statusCode: 0, message: ""})
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -23,10 +26,15 @@ export default function Login() {
 
   const handleSubmit = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true)
+    const res = await loginRequest(data);
 
-    setTimeout(() => {
+    if(!res){
+      homePageRedirect()
+    }else{
       setIsLoading(false)
-    }, 2000)
+      setError(true)
+      setErrorObj(res)
+    }
   }
 
   return (
@@ -45,6 +53,18 @@ export default function Login() {
          </div>
        </div>
       )}
+      {error && (
+            <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-lg">
+            <div className=" bg-gray-700 rounded-lg p-8">
+              <div className="flex flex-col justify-center items-center p-8">
+                <h2 className="ml-2" >Error</h2>
+                <p className="ml-2" >status code: {errorObj.statusCode}</p>
+                <p className="ml-2" >message: {errorObj.message}</p>
+                <Button onClick={() => setError(false)} variant="destructive">Close</Button>
+              </div>
+            </div>
+          </div>
+        )}
       <main className='min-h-96 flex flex-col justify-center items-center p-24'>
         <h1 className="capitalize md:uppercase text-4xl" >Login</h1>
         <Form {...form} >

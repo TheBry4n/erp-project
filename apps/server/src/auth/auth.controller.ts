@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto, LoginDto } from './dto';
-import { Tokens } from '@server/types';
+import { loginRes } from '@server/types';
 import { User } from '@prisma/client';
 
 @Controller('api')
@@ -14,7 +14,7 @@ export class AuthController {
     }
 
     @Post('login')
-    login(@Body() loginDto: LoginDto): Promise<Tokens>{
+    login(@Body() loginDto: LoginDto): Promise<loginRes>{
         return this.service.login(loginDto)
     }
 }

@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@server/prisma/prisma.service';
-import { Tokens } from '@server/types';
+import { loginRes, Tokens } from '@server/types';
 import * as argon from "argon2";
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
@@ -31,7 +31,7 @@ export class AuthService {
         return user;
     }
 
-    async login(dto: LoginDto): Promise<Tokens> {
+    async login(dto: LoginDto): Promise<loginRes> {
         const user = await this.prisma.user.findUnique({
             where: {
                 email: dto.email
@@ -43,7 +43,22 @@ export class AuthService {
 
         if(!matchPW) throw new ForbiddenException("Password errata");
 
-        return this.createTokens(user.userId, user.email);
+        const tokens = await this.createTokens(user.userId, user.email)
+
+        return {
+            tokensInfo: {
+                access_token: tokens.access_token,
+                refresh_token: tokens.refresh_token,
+                ATExpiredTime: this.config.get("JWT_EXPIRE_TIME_AT"),
+                RTExpiredTime: this.config.get("JWT_EXPIRE_TIME_RT")
+            },
+            userData: {
+                nome: user.nome,
+                cognome: user.cognome, 
+                email: user.email,
+                role: user.ruolo
+            }
+        }
     }
 
     async createTokens(sub: string, email: string): Promise<Tokens>{
