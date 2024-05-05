@@ -11,6 +11,7 @@ import { NavBar } from "../../components"
 import { useState } from 'react'
 import { errorResponse } from '@web/src/types'
 import { homePageRedirect } from '@web/src/actions'
+import Link from 'next/link'
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(false)
@@ -92,6 +93,7 @@ export default function Login() {
             <Button className='w-full' type='submit' >Login</Button>
           </form>
         </Form>
+        <p className='mt-4' >Non hai un account? <Link href="/signup" className="hover:underline" >Registrati</Link></p>
       </main>
     </>
   )

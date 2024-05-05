@@ -11,6 +11,7 @@ import { Button } from '@web/src/components/ui/button';
 import { signupRequest }  from "../../actions";
 import { loginRedirect } from '../../actions';
 import { errorResponse } from '@web/src/types';
+import Link from 'next/link';
 
 function signup() {
     const [ isLoading, setLoading ] = useState(false);
@@ -121,6 +122,7 @@ function signup() {
                     <Button className='w-full' type='submit' >Signup</Button>
                 </form>
             </Form>
+            <p className='mt-4' >Hai gia un account? <Link href="/login" className="hover:underline" >Accedi</Link></p>
         </main>
     </>
   )

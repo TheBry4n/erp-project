@@ -38,7 +38,7 @@ export const loginRequest = async (data: loginData): Promise<errorResponse | nul
                     dateOfAccess: new Date()
                 }
             }
-            Cookies.set("__session", JSON.stringify(session), { expires: 7 })
+            localStorage.setItem("__session", JSON.stringify(session))
         }
     }catch(error){
         console.log(error)

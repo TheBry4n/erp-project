@@ -4,6 +4,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { CorsMiddleware } from './middleware';
+import { RefreshGuard } from './guards';
+import { RefreshStrategy } from './startegy';
 
 @Module({
   imports: [
@@ -12,6 +14,7 @@ import { CorsMiddleware } from './middleware';
     PrismaModule,
     AuthModule
   ],
+  providers: [RefreshGuard, RefreshStrategy]
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
