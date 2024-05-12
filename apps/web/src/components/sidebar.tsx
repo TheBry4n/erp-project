@@ -1,30 +1,66 @@
 "use client"
 import React from "react";
-import { Home, LogIn, LogOut, Mail, Settings, Text } from "lucide-react";
+import { Home, LogIn, Mail, Settings, Text } from "lucide-react";
 import { SideBarDesktop } from "./sidebar-desktop";
 import { SideBarItems } from "../types";
 
+const userLinks = [
+    {
+        label: "Home",
+        href: "/",
+        icon: Home
+    },
+    {
+        label: "Chi siamo?",
+        href: "chiSiamo",
+        icon: Text
+    },
+    {
+        label: "Contattaci",
+        href: "contattaci",
+        icon: Mail
+    }
+]
+
+const dashboardLinks = [
+    {
+        label: "Home",
+        href: "/",
+        icon: Home
+    },
+    {
+        label: "Prodotti",
+        href: "/dashboard/prodotti",
+    },
+    {
+        label: "Report",
+        href: "/dashboard/report",
+    }
+]
 
 export function SideBar() {
 
     const sideBarItems: SideBarItems = {
-        links: [
-            {
-                label: "Home",
-                href: "/",
-                icon: Home
-            },
-            {
-                label: "Chi siamo?",
-                href: "chiSiamo",
-                icon: Text
-            },
-            {
-                label: "Contattaci",
-                href: "contattaci",
-                icon: Mail
-            }
-        ],
+        links: {
+            user: userLinks,
+            admin: [
+                ...userLinks,
+                {
+                    label: "Dashboard",
+                    href: "/dashboard",
+                }
+            ]
+        },
+        linksDashboard: {
+            admin: dashboardLinks,
+            manager: [
+                ...dashboardLinks,
+                {
+                    label: "Admin",
+                    href: "/dashboard/admin",
+                }
+            ]
+        },
         accountLinks: {
             loggend: [
                 {

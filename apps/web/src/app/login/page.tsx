@@ -6,34 +6,22 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from '@web/src/components/ui/input'
 import { Button } from '@web/src/components/ui/button'
-import { loginRequest } from '@web/src/actions'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { homePageRedirect, loginRequest } from '@web/src/actions'
+import { useLayoutEffect, useState } from 'react'
 import { errorResponse } from '@web/src/types'
-import { homePageRedirect } from '@web/src/actions'
 import Link from 'next/link'
-import { useLocalStorage, useSession } from '@web/src/hooks'
+import { useSession } from '@web/src/hooks'
 import { redirect } from 'next/navigation'
 import { LoadingScreen, ErrorScreen } from '@web/src/components'
-import { memo } from 'react'
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false)
   const [errorObj, setErrorObj] = useState<errorResponse | undefined>(undefined)
-  const session = useSession()
-
-  console.log("render login")
+  const { session, setUserSession: setSession } = useSession()
 
   useLayoutEffect(() => {
     if(session) redirect("/")
   }, [session])
-
-  // const { getItem } = useLocalStorage("__session")
-
-  // useLayoutEffect(() => {
-  //   const session = getItem();
-
-  //   if(session) redirect("/")
-  // }, [])
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -96,4 +84,4 @@ function Login() {
   )
 }
 
-export default memo(Login);
+export default Login;

@@ -8,7 +8,14 @@ interface LinkObj {
 }
 
 export interface SideBarItems {
-    links: Array<LinkObj>;
+    links: {
+        user: Array<LinkObj>;
+        admin: Array<LinkObj>;
+    };
+    linksDashboard: {
+        admin: Array<LinkObj>;
+        manager: Array<LinkObj>;
+    };
     accountLinks: {
         loggend: Array<LinkObj>;
         notLogged: Array<LinkObj>;

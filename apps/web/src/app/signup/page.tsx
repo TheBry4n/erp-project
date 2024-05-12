@@ -7,24 +7,21 @@ import { signupSchema }  from "@web/src/zodSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from '@web/src/components/ui/input';
 import { Button } from '@web/src/components/ui/button';
-import { signupRequest }  from "../../actions";
-import { loginRedirect } from '../../actions';
+import { loginRedirect, signupRequest }  from "../../actions";
 import { errorResponse } from '@web/src/types';
 import Link from 'next/link';
-import { useLocalStorage } from '@web/src/hooks';
+import { useSession } from '@web/src/hooks';
 import { redirect } from 'next/navigation';
 import { LoadingScreen, ErrorScreen } from '@web/src/components';
 
 function signup() {
     const [ isLoading, setLoading ] = useState(false);
     const [errorObj, setErrorObj] = useState<undefined | errorResponse>(undefined)
-    const { getItem } = useLocalStorage("__session")
+    const { session } = useSession()
 
     useLayoutEffect(() => {
-        const session = getItem();
-
         if(session) redirect("/")
-    }, [])
+      }, [session])
 
 
     const form = useForm<z.infer<typeof signupSchema>>({

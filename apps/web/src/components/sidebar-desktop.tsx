@@ -1,5 +1,5 @@
 "use client"
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { SideBarItems } from "../types";
 import Link from "next/link";
 import { SideBarButton } from "./sidebar-button";
@@ -9,25 +9,43 @@ import { Button } from "./ui/button";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { User, MoreHorizontal, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useLocalStorage } from "../hooks";
+import { useSession } from "../hooks";
+import { homePageRedirect } from "../actions";
 
 interface SideBarDesktopProps {
     sideBarItems: SideBarItems;
 }
 
 export function SideBarDesktop(props: SideBarDesktopProps) {
-    const { getItem, setItem, removeItem } = useLocalStorage("__session")
     const pathName = usePathname()
-    const [ session, setSession ] = useState<undefined | {id:number}>(undefined)
-    
-    useLayoutEffect(() => {
-        const session = getItem()
-        setSession(session)
-    }, [])
+    const [ dashboard, setDashboard ] = useState(false)
+    const [ home, setHome ] = useState(false)
+    const { session, setUserSession: setSession, logoutUser: logout } = useSession()
+
+    useEffect(() => {
+        if(!dashboard && pathName.includes("dashboard")){
+            setDashboard(true)
+        }else if(dashboard && !pathName.includes("dashboard")){
+            setDashboard(false)
+        }
+    }, [pathName, dashboard])
+
+    useEffect(() => {
+        if(!home && pathName === "/"){
+            setHome(true)
+        }else if(home && pathName !== "/"){
+            setHome(false)
+        }
+    }, [pathName, home])
+
 
     const handleLogOut = () => {
-        removeItem()
-        setSession(undefined)
+        if(pathName.includes("dashboard")){
+            logout()
+            homePageRedirect()
+        }else{
+            logout()
+        }
     }
 
     return (
@@ -38,14 +56,56 @@ export function SideBarDesktop(props: SideBarDesktopProps) {
                 </h3>
                 <div className="mt-5" >
                     <div className="flex flex-col gap-1 w-full" >
-                        {props.sideBarItems.links.map((link, index) => (
-                            <Link key={index} href={link.href} >
-                                <SideBarButton variant={pathName === link.href ? "secondary" : "ghost"} icon={link.icon} className="w-full" > 
-                                {link.label} 
-                                </SideBarButton>
-                            </Link>
-                        ))}
-                        {props.sideBarItems.extras}
+                        {!dashboard ? (
+                            <>
+                                {session && (session.userInfo.role === "ADMIN" || session.userInfo.role === "MANAGER") ? (
+                                    <>
+                                        {props.sideBarItems.links.admin.map((link, index) => (
+                                            <Link key={index} href={link.href} >
+                                                <SideBarButton variant={pathName === link.href ? "secondary" : "ghost"} icon={link.icon} className="w-full" > 
+                                                {link.label} 
+                                                </SideBarButton>
+                                            </Link>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <>
+                                        {props.sideBarItems.links.user.map((link, index) => (
+                                            <Link key={index} href={link.href} >
+                                                <SideBarButton variant={pathName === link.href ? "secondary" : "ghost"} icon={link.icon} className="w-full" > 
+                                                {link.label} 
+                                                </SideBarButton>
+                                            </Link>
+                                        ))}
+                                    </>
+                                )}
+                                {props.sideBarItems.extras}
+                            </>
+                        ) : (
+                            <>
+                                {session?.userInfo.role === "ADMIN" ? (
+                                    <>
+                                        {props.sideBarItems.linksDashboard.admin.map((link, index) => (
+                                            <Link key={index} href={link.href} >
+                                                <SideBarButton variant={pathName === link.href ? "secondary" : "ghost"} icon={link.icon} className="w-full" > 
+                                                {link.label} 
+                                                </SideBarButton>
+                                            </Link>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <>
+                                        {props.sideBarItems.linksDashboard.manager.map((link, index) => (
+                                            <Link key={index} href={link.href} >
+                                                <SideBarButton variant={pathName === link.href ? "secondary" : "ghost"} icon={link.icon} className="w-full" > 
+                                                {link.label} 
+                                                </SideBarButton>
+                                            </Link>
+                                        ))}
+                                    </>
+                                )}
+                            </>
+                        )}
                     </div>
                     <div className="absolute left-0 bottom-3 w-full px-3" >
                         <Separator className="absolute -top-3 left-0 w-full" />
@@ -57,7 +117,7 @@ export function SideBarDesktop(props: SideBarDesktopProps) {
                                             <Avatar className="h-5 w-5">
                                                 <AvatarFallback><User size={15} /></AvatarFallback>
                                             </Avatar>
-                                            <span>Username</span>
+                                            <span>{ session ? session.userInfo.nome : "user" }</span>
                                         </div>
                                         <MoreHorizontal/>
                                     </div>

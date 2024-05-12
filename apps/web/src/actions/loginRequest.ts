@@ -33,7 +33,7 @@ export const loginRequest = async (data: loginData): Promise<errorResponse | nul
                     nome : resData.userData.nome,
                     cognome : resData.userData.cognome,
                     email: resData.userData.email,
-                    role: resData.userData.ruolo,
+                    role: resData.userData.role,
                     dateOfAccess: new Date()
                 }
             }
