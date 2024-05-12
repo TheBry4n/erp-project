@@ -5,7 +5,7 @@ import { JwtPayload, loginRes, Tokens, tokensInfo } from '@server/types';
 import * as argon from "argon2";
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { LoginDto, RefreshDto, SignupDto } from './dto';
+import { LoginDto, LogoutDto, RefreshDto, SignupDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -95,6 +95,31 @@ export class AuthService {
             ATExpiredTime: this.config.get("JWT_EXPIRE_TIME_AT"),
             RTExpiredTime: this.config.get("JWT_EXPIRE_TIME_RT")
         }
+    }
+
+    async logout(dto: LogoutDto): Promise<void> {
+        const user = await this.prisma.user.findUnique({
+            where: {
+                email: dto.email
+            }
+        })
+
+        if(!user) throw new ForbiddenException("Email non valida");
+
+        if(user.hashPW === "") throw new ForbiddenException("User gia sloggato")
+
+        const RTDtohash = await argon.hash(dto.refreshToken)
+
+        if(RTDtohash !== user.hashRT) throw new ForbiddenException("Refresh token non appartenente al tuo account");
+
+        await this.prisma.user.update({
+            where: {
+                email: dto.email
+            },
+            data: {
+                hashRT: ""
+            }
+        })
     }
 
     private async createTokens(payload: JwtPayload): Promise<Tokens>{

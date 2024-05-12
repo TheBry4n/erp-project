@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { loginSchema } from "../zodSchema";
 import { errorResponse, Session } from "../types";
-import Cookies from 'js-cookie';
 
 type loginData = z.infer<typeof loginSchema>
 

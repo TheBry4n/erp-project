@@ -1,5 +1,3 @@
-
-"use server"
 import { z } from "zod"
 import { signupSchema } from '../zodSchema'
 import { errorResponse } from "../types";

@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
-import { cn } from "@web/src/lib/utils"
+import { Inter } from "next/font/google";
+import { SideBar } from "../components";
 import "./globals.css";
 
-const fontSans = FontSans({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({ subsets: ["latin"]});
 
 export const metadata: Metadata = {
   title: "Scarpe",
-  description: "Gestionale per aziuenda di scarpe",
+  description: "Gestionale per azienda di scarpe",
 };
 
 export default function RootLayout({
@@ -16,11 +16,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
-        fontSans.variable
-      )}>{children}</body>
+    <html lang="en" className="dark" >
+      <body className={inter.className} >
+        <div className="flex" >
+          <SideBar />
+          <main className="ml-[300px] flex-1"> 
+              {children}
+          </main>
+        </div>
+      </body>
     </html>
   );
 }
