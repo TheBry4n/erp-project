@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import { SideBarItems } from "../types";
+import { Session, SideBarItems } from "../types";
 import Link from "next/link";
 import { SideBarButton } from "./sidebar-button";
 import { Separator } from "./ui/separator";
@@ -19,8 +19,7 @@ interface SideBarDesktopProps {
 export function SideBarDesktop(props: SideBarDesktopProps) {
     const pathName = usePathname()
     const [ dashboard, setDashboard ] = useState(false)
-    const [ home, setHome ] = useState(false)
-    const { session, setUserSession: setSession, logoutUser: logout } = useSession()
+    const { session, setUserSession: setSession, logoutUser: logout, getSession } = useSession()
 
     useEffect(() => {
         if(!dashboard && pathName.includes("dashboard")){
@@ -29,15 +28,6 @@ export function SideBarDesktop(props: SideBarDesktopProps) {
             setDashboard(false)
         }
     }, [pathName, dashboard])
-
-    useEffect(() => {
-        if(!home && pathName === "/"){
-            setHome(true)
-        }else if(home && pathName !== "/"){
-            setHome(false)
-        }
-    }, [pathName, home])
-
 
     const handleLogOut = () => {
         if(pathName.includes("dashboard")){

@@ -1,4 +1,4 @@
-import { Body, Controller, ForbiddenException, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto, LoginDto, RefreshDto, LogoutDto } from './dto';
 import { JwtPayload, loginRes, tokensInfo } from '@server/types';
@@ -30,5 +30,10 @@ export class AuthController {
     @Post("logout")
     logout(@Body() logoutDto: LogoutDto): Promise<void> {
         return this.service.logout(logoutDto)
+    }
+    
+    @Get("products")
+    products(){
+        
     }
 }

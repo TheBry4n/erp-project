@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { Home, LogIn, Mail, Settings, Text } from "lucide-react";
+import { Bug, Home, LayoutDashboard, List, LogIn, Mail, Settings, Text } from "lucide-react";
 import { SideBarDesktop } from "./sidebar-desktop";
 import { SideBarItems } from "../types";
 
@@ -16,13 +16,18 @@ const userLinks = [
         icon: Text
     },
     {
-        label: "Contattaci",
+        label: "Bug report",
         href: "contattaci",
         icon: Mail
     }
 ]
 
 const dashboardLinks = [
+    {
+        label: "Dashboard",
+        href: "/dashboard",
+        icon: LayoutDashboard
+    },
     {
         label: "Home",
         href: "/",
@@ -31,10 +36,12 @@ const dashboardLinks = [
     {
         label: "Prodotti",
         href: "/dashboard/prodotti",
+        icon: List
     },
     {
         label: "Report",
         href: "/dashboard/report",
+        icon: Bug
     }
 ]
 
@@ -48,6 +55,7 @@ export function SideBar() {
                 {
                     label: "Dashboard",
                     href: "/dashboard",
+                    icon: LayoutDashboard
                 }
             ]
         },
