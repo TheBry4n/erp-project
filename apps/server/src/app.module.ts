@@ -6,13 +6,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { CorsMiddleware } from './middleware';
 import { RefreshGuard } from './guards';
 import { RefreshStrategy } from './startegy';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({isGlobal: true}),
     JwtModule.register({}),
     PrismaModule,
-    AuthModule
+    AuthModule,
+    ProductModule
   ],
   providers: [RefreshGuard, RefreshStrategy]
 })

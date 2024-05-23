@@ -2,7 +2,7 @@ export const useLocalStorage = (key: string) => {
     const getItem = () => {
         try{
             const item = localStorage.getItem(key)
-            return item ? JSON.parse(item) : undefined
+            return !item ? undefined : JSON.parse(item)
         }catch(err){
             console.error(err)
         }

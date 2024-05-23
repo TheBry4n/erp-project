@@ -1,8 +1,8 @@
 export type Product = {
-    id: string,
+    scarpaId: string,
     marca: string,
     modello: string,
     descrizione: string,
-    prezzo: number,
-    urlImg: Uint8Array
+    prezzoUnitario: number,
+    immagine: Uint8Array
 }

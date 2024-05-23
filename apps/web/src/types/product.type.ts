@@ -1,7 +1,8 @@
 export interface Product {
-    id: string,
-    nome: string,
-    descrzione: string,
-    prezzo: number,
-    urlImg: string
+    scarpaId: string,
+    marca: string,
+    modello: string,
+    descrizione: string,
+    prezzoUnitario: number,
+    immagine: Uint8Array
 }

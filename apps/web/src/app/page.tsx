@@ -1,37 +1,45 @@
 "use client"
 import React, { useEffect, useState } from "react";
-import { SideBar, WithProtection } from "../components";
+import { Card, Model, SideBar, WithProtection } from "../components";
 import { Product, withProtectionProps } from "../types";
 import { useSession } from "../hooks";
 
 export default function HomePage() {
   const routeProps: withProtectionProps = {asPublicRoute: true, sessionRequired: false};
   const {session, getSession, setUserSession: setSession } = useSession();
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   useEffect(()=>{
     const newSession = getSession();
-    if(session != newSession && newSession ) setSession(newSession)
+    if(!session && newSession){
+      setSession(newSession)
+      console.log("ciao")
+    }
   },[session])
 
   useEffect(() => {
     const fetchProducts = async () =>{
       try{
-        const response = await fetch("/api/products",{
-          method: "GET"
+        const response = await fetch("http://localhost:3001/products/",{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json"
+          }
         });
-        if(!response.ok) throw new Error;
-
-        const data = await response.json();
-        setProducts(data);
+        const text = await response.text();
+        if (!text) {
+          throw new Error('La risposta è vuota');
+        }
+        const data = JSON.parse(text);
+        setProducts(data.products);
       }catch(err){
         console.error(err)
       }
     }
 
     fetchProducts()
-  },[])
+  },[session])
 
 
   return (
@@ -49,7 +57,20 @@ export default function HomePage() {
                 )}
               </div>
             </section>
-
+            <div className="flex flex-wrap justify-center mt-8">
+              {!products.length ? (
+                <h3>Loading...</h3>
+              ) : (
+                <>
+                  {products.map(product => (
+                    <Card key={product.scarpaId} product={product} onClick={setSelectedProduct} />
+                  ))}
+                </>
+              )}
+          </div>
+          {selectedProduct && (
+            <Model product={selectedProduct} onClose={() => setSelectedProduct(null)} />
+          )}   
           </main>
       </div>
     </WithProtection>

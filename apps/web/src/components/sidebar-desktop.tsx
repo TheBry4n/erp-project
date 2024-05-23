@@ -21,6 +21,14 @@ export function SideBarDesktop(props: SideBarDesktopProps) {
     const [ dashboard, setDashboard ] = useState(false)
     const { session, setUserSession: setSession, logoutUser: logout, getSession } = useSession()
 
+    useEffect(()=>{
+        const newSession = getSession();
+    if(!session && newSession){
+      setSession(newSession)
+      console.log("ciao")
+    } 
+    },[session])
+
     useEffect(() => {
         if(!dashboard && pathName.includes("dashboard")){
             setDashboard(true)
@@ -36,6 +44,8 @@ export function SideBarDesktop(props: SideBarDesktopProps) {
         }else{
             logout()
         }
+
+        console.log(session)
     }
 
     return (
