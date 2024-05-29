@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
 import { Card, Model, SideBar, WithProtection } from "../components";
-import { Product, withProtectionProps } from "../types";
+import { CarrelItemType, withProtectionProps, Product } from "../types";
 import { useSession } from "../hooks";
 import Cookies from "js-cookie";
 
@@ -42,16 +42,39 @@ export default function HomePage() {
 
   },[session])
 
-  const handleCarrello = (prodotto: Product) => {
+  const handleCarrello = (item: CarrelItemType, maxQuantity: number) => {
     try{
-      let carrello: Product[] = []
+      let carrello: CarrelItemType[] = []
       const carrelloString = Cookies.get("carrello");
       if(carrelloString) {
-        carrello = JSON.parse(carrelloString) as Product[]
+        carrello = JSON.parse(carrelloString) as CarrelItemType[]
       }
-      carrello.push(prodotto)
+      const existingItemIndex = carrello.findIndex(cartItem => cartItem.id === item.id);
+    
+      if (existingItemIndex !== -1) {
+        // Se l'elemento esiste, aggiorna la quantità
+        const newQuantity = carrello[existingItemIndex].quantity + item.quantity;
+        
+        if (newQuantity > maxQuantity) {
+          alert(`Errore: La quantità totale per questo prodotto non può superare ${maxQuantity}.`);
+          return;
+        }
+        
+        carrello[existingItemIndex].quantity = newQuantity;
+      } else {
+        // Se l'elemento non esiste, controlla la quantità prima di aggiungere
+        if (item.quantity > maxQuantity) {
+          alert(`Errore: La quantità totale per questo prodotto non può superare ${maxQuantity}.`);
+          return;
+        }else{
+          carrello.push({ id: item.id, quantity: item.quantity });
+        }
+        
+      }
       Cookies.remove("carrello")
       Cookies.set("carrello", JSON.stringify(carrello), {expires: 7})
+      alert("Item aggiunto con successo al carrello!!")
+      setSelectedProduct(null)
     }catch(err){
       console.error(err);
     }

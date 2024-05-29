@@ -57,6 +57,7 @@ async function main() {
         prezzoUnitario: 120.50,
         immagine: imagesBytes[0],
         descrizione: 'Scarpe sportive comode e alla moda.',
+        quantita: 19
       },
       {
         marca: 'Nike',
@@ -64,6 +65,7 @@ async function main() {
         prezzoUnitario: 150,
         immagine: imagesBytes[1],
         descrizione: 'Scarpe sportive comode e alla moda.',
+        quantita: 12
       },
       {
         marca: 'Nike',
@@ -71,6 +73,7 @@ async function main() {
         prezzoUnitario: 160.45,
         immagine: imagesBytes[3],
         descrizione: 'Scarpe sportive comode e alla moda.',
+        quantita: 10
       },
       {
         marca: 'Nike',
@@ -78,6 +81,7 @@ async function main() {
         prezzoUnitario: 120.50,
         immagine: imagesBytes[4],
         descrizione: 'Scarpe sportive comode e alla moda.',
+        quantita: 21
       },
       {
         marca: 'Nike',
@@ -85,6 +89,7 @@ async function main() {
         prezzoUnitario: 120.50,
         immagine: imagesBytes[5],
         descrizione: 'Scarpe sportive comode e alla moda.',
+        quantita: 5
       }
     ]
   })

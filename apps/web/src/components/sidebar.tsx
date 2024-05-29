@@ -19,6 +19,11 @@ const userLinks = [
         label: "Contattaci",
         href: "contattaci",
         icon: Mail
+    },
+    {
+        label: "Carrello",
+        href: "/carrello",
+        icon: ShoppingCart
     }
 ]
 
@@ -75,11 +80,6 @@ export function SideBar() {
                     label: "Account settings",
                     href: "/settings",
                     icon: Settings
-                },
-                {
-                    label: "Carrello",
-                    href: "/carrello",
-                    icon: ShoppingCart
                 }
             ],
             notLogged: [

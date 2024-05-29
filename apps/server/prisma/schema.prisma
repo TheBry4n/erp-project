@@ -44,6 +44,7 @@ model Scarpe {
   prezzoUnitario Float
   immagine       Bytes
   descrizione    String
+  quantita       Int
   updateScarpa   DateTime @updatedAt
   ordini         Ordine[] @relation("scarpaOrdine")
 

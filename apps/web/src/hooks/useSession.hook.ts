@@ -2,6 +2,8 @@ import { useEffect, useState } from "react"
 import { Session } from "../types";
 import { useLocalStorage } from "./useLocalStorage.hook";
 import { addDays, addMinutes, isAfter } from "date-fns";
+import { Cookie } from "next/font/google";
+import Cookies from "js-cookie";
 
  export const useSession = () => {
     const [ session, setSession ] = useState<undefined | Session>(undefined);
@@ -72,6 +74,7 @@ import { addDays, addMinutes, isAfter } from "date-fns";
     const logoutUser = () => {
         removeItem()
         setSession(undefined)
+        Cookies.remove("carrello")
     }
 
     const getSession = (): Session | undefined => {

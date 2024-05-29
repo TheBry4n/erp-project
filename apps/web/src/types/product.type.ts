@@ -4,5 +4,6 @@ export interface Product {
     modello: string,
     descrizione: string,
     prezzoUnitario: number,
-    immagine: Uint8Array
+    immagine: Uint8Array,
+    quantita: number
 }
