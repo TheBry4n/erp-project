@@ -25,7 +25,6 @@ export function SideBarDesktop(props: SideBarDesktopProps) {
         const newSession = getSession();
     if(!session && newSession){
       setSession(newSession)
-      console.log("ciao")
     } 
     },[session])
 

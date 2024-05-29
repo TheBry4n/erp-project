@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Card, Model, SideBar, WithProtection } from "../components";
 import { Product, withProtectionProps } from "../types";
 import { useSession } from "../hooks";
+import Cookies from "js-cookie";
 
 export default function HomePage() {
   const routeProps: withProtectionProps = {asPublicRoute: true, sessionRequired: false};
@@ -14,7 +15,6 @@ export default function HomePage() {
     const newSession = getSession();
     if(!session && newSession){
       setSession(newSession)
-      console.log("ciao")
     }
   },[session])
 
@@ -39,17 +39,33 @@ export default function HomePage() {
     }
 
     fetchProducts()
+
   },[session])
+
+  const handleCarrello = (prodotto: Product) => {
+    try{
+      let carrello: Product[] = []
+      const carrelloString = Cookies.get("carrello");
+      if(carrelloString) {
+        carrello = JSON.parse(carrelloString) as Product[]
+      }
+      carrello.push(prodotto)
+      Cookies.remove("carrello")
+      Cookies.set("carrello", JSON.stringify(carrello), {expires: 7})
+    }catch(err){
+      console.error(err);
+    }
+  }
 
 
   return (
     <WithProtection {...routeProps}>
       <div className="flex" >
           <SideBar />
-          <main className="ml-[300px] flex-1 flex items-center justify-center mt-20"> 
+          <main className="ml-[300px] flex-1 flex flex-col items-center justify-center mt-20"> 
             <section className="flex flex-col items-center justify-center -mt-8 text-3xl font-bold" >
               <h1>
-                {session ? `Bentornato, ${session.userInfo.nome}` : `Benvenuto alla home page`}
+                {session ? `Bentornato ${session.userInfo.nome}` : `Benvenuto alla home page`}
               </h1>
               <div className="text-xs p-4" >
                 {session ? "Buona permanenza" : (
@@ -67,10 +83,10 @@ export default function HomePage() {
                   ))}
                 </>
               )}
-          </div>
-          {selectedProduct && (
-            <Model product={selectedProduct} onClose={() => setSelectedProduct(null)} />
-          )}   
+            </div>
+            {selectedProduct && (
+              <Model product={selectedProduct} onClose={() => setSelectedProduct(null)} session={session} onAdd={handleCarrello} />
+            )}   
           </main>
       </div>
     </WithProtection>

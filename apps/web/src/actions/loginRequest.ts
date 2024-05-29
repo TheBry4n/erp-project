@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { loginSchema } from "../zodSchema";
 import { errorResponse, Session } from "../types";
+import Cookies from "js-cookie";
 
 type loginData = z.infer<typeof loginSchema>
 
@@ -38,6 +39,7 @@ export const loginRequest = async (data: loginData): Promise<errorResponse | nul
                 }
             }
             localStorage.setItem("__session", JSON.stringify(session))
+            Cookies.set("carrello", JSON.stringify([]), { expires: 7 })
         }
     }catch(error){
         console.log(error)
