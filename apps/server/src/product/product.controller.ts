@@ -1,7 +1,7 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from "../types"
-import { GetCartItemsDto } from './dto';
+import { GetCartItemsDto, RifornimentoDto } from './dto';
 
 @Controller('products')
 export class ProductController {
@@ -15,5 +15,10 @@ export class ProductController {
     @Post("getCartItems")
     getCartItems(@Body() body: GetCartItemsDto): Promise<{ products: Array<Product> | [] }> {
         return this.service.getCartItems(body);
+    }
+
+    @Post("rifornisci")
+    rifornisci(@Query("id") prodID: string, @Body() dto: RifornimentoDto): Promise<void>{
+        return this.service.rifornisci(dto, prodID);
     }
 }

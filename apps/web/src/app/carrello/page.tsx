@@ -4,6 +4,8 @@ import { CartItem, SideBar, WithProtection } from "@web/src/components"
 import { CarrelItemType, Product, withProtectionProps } from "@web/src/types"
 import { useSession } from "@web/src/hooks";
 import Cookies from "js-cookie";
+import Link from "next/link";
+import { Button } from "@web/src/components/ui/button";
 
 
 
@@ -106,7 +108,14 @@ export default function Carrello() {
         }
     }
 
+    const calculateTotal = () => {
+        return products.reduce((total, product) => {
+            const quantity = getItemQuantity(product.scarpaId);
+            return total + (product.prezzoUnitario * quantity);
+        }, 0);
+    };
 
+    const total = calculateTotal();
     const routeProps: withProtectionProps = {sessionRequired: true}
     return(
         <WithProtection {...routeProps}>
@@ -115,7 +124,7 @@ export default function Carrello() {
                 <main className="ml-[300px] flex-1"> 
                     <section className="flex flex-col items-center justify-center mt-4 text-3xl font-bold" >
                         <h1>
-                            {`Carrello di ${session?.userInfo.nome}`} a
+                            {`Carrello di ${session?.userInfo.nome}`}
                         </h1>
                     </section>
                     <div className="flex flex-col items-center flex-wrap justify-center mt-8">
@@ -126,6 +135,14 @@ export default function Carrello() {
                                 {products.map(product => (
                                     <CartItem key={product.scarpaId} product={product} quantity={getItemQuantity(product.scarpaId)} onRemove={handleRemove} onUpdate={handleUpdate}/>
                                 ))}
+                                <div className="mt-4 text-2xl font-semibold">
+                                    Totale: €{total.toFixed(2)}
+                                </div>
+                                <Link href="/checkout" className="mt-4">
+                                    <Button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                                        Vai alla cassa
+                                    </Button>
+                                </Link>
                             </>
                         )}
                     </div>

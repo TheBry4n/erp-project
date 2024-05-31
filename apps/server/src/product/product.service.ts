@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '@server/prisma/prisma.service';
 import { Product } from "../types"
-import { GetCartItemsDto } from './dto';
+import { GetCartItemsDto, RifornimentoDto } from './dto';
 
 @Injectable()
 export class ProductService {
@@ -56,5 +56,20 @@ export class ProductService {
         }catch(err){
             throw new InternalServerErrorException(`${err.message}`)
         }
+    }
+
+    async rifornisci(dto: RifornimentoDto, prodID: string): Promise<void>{
+        const { quantity } = dto
+
+        const prod = await this.prisma.scarpe.findUnique({
+            where: { scarpaId: prodID }
+        })
+
+        if(!prod) throw new InternalServerErrorException("Prodotto non trovato");
+
+        await this.prisma.scarpe.update({
+            where: {scarpaId: prodID},
+            data:{ quantita: { increment: quantity } }
+        })
     }
 }
