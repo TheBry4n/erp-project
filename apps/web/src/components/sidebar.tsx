@@ -1,6 +1,6 @@
 "use client"
 import React from "react";
-import { Bug, Home, LayoutDashboard, List, LogIn, Mail, Settings, ShoppingCart, Text } from "lucide-react";
+import { Bug, Home, LayoutDashboard, List, LogIn, Mail, Settings, ShoppingCart, Text, UserCog, UserRoundSearch } from "lucide-react";
 import { SideBarDesktop } from "./sidebar-desktop";
 import { SideBarItems } from "../types";
 
@@ -24,6 +24,11 @@ const userLinks = [
         label: "Carrello",
         href: "/carrello",
         icon: ShoppingCart
+    },
+    {
+        label: "Candidatura",
+        href: "/candidatura",
+        icon: UserRoundSearch
     }
 ]
 
@@ -47,6 +52,11 @@ const dashboardLinks = [
         label: "Report",
         href: "/dashboard/report",
         icon: Mail
+    },
+    {
+        label: "Users",
+        href: "/dashboard/users",
+        icon: UserCog
     }
 ]
 
@@ -67,18 +77,14 @@ export function SideBar() {
         linksDashboard: {
             admin: dashboardLinks,
             manager: [
-                ...dashboardLinks,
-                {
-                    label: "Admin",
-                    href: "/dashboard/admin",
-                }
+                ...dashboardLinks
             ]
         },
         accountLinks: {
             loggend: [
                 {
                     label: "Account settings",
-                    href: "/settings",
+                    href: "/account-settings",
                     icon: Settings
                 }
             ],

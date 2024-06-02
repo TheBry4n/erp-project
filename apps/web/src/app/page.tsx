@@ -4,12 +4,14 @@ import { Card, Model, SideBar, WithProtection } from "../components";
 import { CarrelItemType, withProtectionProps, Product } from "../types";
 import { useSession } from "../hooks";
 import Cookies from "js-cookie";
+import { SuccessToast, ErrorToast } from "../utils"
+import { ToastContainer } from "react-toastify";
 
 export default function HomePage() {
   const routeProps: withProtectionProps = {asPublicRoute: true, sessionRequired: false};
-  const {session, getSession, setUserSession: setSession } = useSession();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const {session, getSession, setUserSession: setSession } = useSession();
 
   useEffect(()=>{
     const newSession = getSession();
@@ -52,7 +54,6 @@ export default function HomePage() {
       const existingItemIndex = carrello.findIndex(cartItem => cartItem.id === item.id);
     
       if (existingItemIndex !== -1) {
-        // Se l'elemento esiste, aggiorna la quantità
         const newQuantity = carrello[existingItemIndex].quantity + item.quantity;
         
         if (newQuantity > maxQuantity) {
@@ -62,7 +63,6 @@ export default function HomePage() {
         
         carrello[existingItemIndex].quantity = newQuantity;
       } else {
-        // Se l'elemento non esiste, controlla la quantità prima di aggiungere
         if (item.quantity > maxQuantity) {
           alert(`Errore: La quantità totale per questo prodotto non può superare ${maxQuantity}.`);
           return;
@@ -73,10 +73,10 @@ export default function HomePage() {
       }
       Cookies.remove("carrello")
       Cookies.set("carrello", JSON.stringify(carrello), {expires: 7})
-      alert("Item aggiunto con successo al carrello!!")
+      SuccessToast({title: "Prodotto aggiunto con successo al carrello", expiredTime: 3000})
       setSelectedProduct(null)
     }catch(err){
-      console.error(err);
+      ErrorToast({ title: "Errore nell'inserimento di questo articolo", expiredTime: 3000 })
     }
   }
 
@@ -112,6 +112,7 @@ export default function HomePage() {
             )}   
           </main>
       </div>
+      <ToastContainer/>
     </WithProtection>
   );
 }

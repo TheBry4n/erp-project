@@ -9,3 +9,7 @@ export const loginRedirect = () => {
 export const homePageRedirect = () => {
     redirect("/")
 }
+
+export const dashboardProductRidirect = () => {
+    redirect("/dashboard/prodotti")
+}

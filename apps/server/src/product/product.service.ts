@@ -1,7 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '@server/prisma/prisma.service';
 import { Product } from "../types"
-import { GetCartItemsDto, RifornimentoDto } from './dto';
+import { CheckoutDto, CreateProductDto, GetCartItemsDto, RifornimentoDto } from './dto';
+import { readFileSync } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ProductService {
@@ -71,5 +73,40 @@ export class ProductService {
             where: {scarpaId: prodID},
             data:{ quantita: { increment: quantity } }
         })
+    }
+
+    async create(dto: CreateProductDto): Promise<void>{
+        const buffer = readFileSync(path.join(__dirname, "../../../src/product/image/immagine-non-disponibile.png"))
+        const newProd = await this.prisma.scarpe.create({
+            data: {
+                marca: dto.marca,
+                modello: dto.modello,
+                descrizione: dto.descrizione,
+                prezzoUnitario: dto.prezzo,
+                quantita: dto.quantita,
+                immagine: buffer
+            }
+        })
+
+        if(!newProd) throw new InternalServerErrorException("Errore nella creazione del nuovo prodotto");
+
+        return;
+    }
+
+    async checkout(dto: CheckoutDto): Promise<void> {
+        try{
+            dto.cart.forEach( async (el) => {
+                await this.prisma.scarpe.update({
+                    where: {
+                        scarpaId: el.id
+                    },
+                    data: {
+                        quantita: { decrement: el.quantita }
+                    }
+                })
+            })
+        }catch(err){
+            throw new InternalServerErrorException("Errore nell'acquisto")
+        }
     }
 }

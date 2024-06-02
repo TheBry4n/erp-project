@@ -4,6 +4,8 @@ import { ModalProd, SideBar, WithProtection } from "@web/src/components"
 import { Product, withProtectionProps } from "@web/src/types"
 import Link from "next/link"
 import { Button } from "@web/src/components/ui/button"
+import { SuccessToast, ErrorToast } from "../../../utils"
+import { ToastContainer } from "react-toastify"
 
 const prodotti = () => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -77,9 +79,9 @@ const prodotti = () => {
                 );
                 setProducts(updatedProducts);
             }
-
+            SuccessToast({title: "Rifornimento avvenuto con successo", expiredTime: 3000})
         } catch (err) {
-            console.error("Errore nel rifornire il prodotto", err);
+            ErrorToast({title: "Errore nel rifornimento", expiredTime: 3000})
         }
 
         handleCloseModal();
@@ -142,6 +144,7 @@ const prodotti = () => {
                 quantity={quantity}
                 setQuantity={setQuantity}
             />
+            <ToastContainer/>
         </WithProtection>
     )
 }

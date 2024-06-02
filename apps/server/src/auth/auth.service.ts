@@ -1,7 +1,7 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@server/prisma/prisma.service';
-import { JwtPayload, loginRes, Tokens, tokensInfo } from '@server/types';
+import { Info, JwtPayload, loginRes, Tokens, tokensInfo } from '@server/types';
 import * as argon from "argon2";
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
@@ -143,5 +143,37 @@ export class AuthService {
         ])
 
         return { access_token: at, refresh_token: rt }
+    }
+
+    async getInfo(): Promise<Info> {
+        try{
+            let numUser = 0
+            let numAdmin = 0
+            const users = await this.prisma.user.findMany({
+                select: {
+                    ruolo: true
+                }
+            })
+
+            const numProd = await this.prisma.scarpe.count()
+
+            const numCandidati = await this.prisma.candidati.count()
+
+            users.forEach(user => {
+                if(user.ruolo === "ADMIN") numAdmin++;
+                else if(user.ruolo === "UTENTE") numUser++
+            })
+
+            return {
+                info: {
+                    numAdmin,
+                    numCandidati,
+                    numProd,
+                    numUser
+                }
+            }
+        }catch(err){
+            throw new InternalServerErrorException("Errore nel calcolo delle info")
+        }
     }
 }

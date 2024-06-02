@@ -1,7 +1,7 @@
-import { Body, Controller, ForbiddenException, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Get, Post, Put, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignupDto, LoginDto, RefreshDto, LogoutDto } from './dto';
-import { JwtPayload, loginRes, tokensInfo } from '@server/types';
+import { Info, JwtPayload, loginRes, tokensInfo } from '@server/types';
 import { User } from '@prisma/client';
 import { RefreshGuard } from '@server/guards';
 import { GetPayLoad } from '@server/decorator';
@@ -31,9 +31,9 @@ export class AuthController {
     logout(@Body() logoutDto: LogoutDto): Promise<void> {
         return this.service.logout(logoutDto)
     }
-    
-    @Get("products")
-    products(){
-        
+
+    @Get("info")
+    getInfo(): Promise<Info>{
+        return this.service.getInfo();
     }
 }
